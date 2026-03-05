@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Hover menu
-// @version      0.1
+// @version      0.2
 // @description  adds hover back to ddb's site menu
 // @author       Azmoria
 // @require      https://code.jquery.com/jquery-3.6.0.min.js
@@ -11,16 +11,27 @@
 // @run-at       document-end
 // ==/UserScript==
 
-(function() {
+(function () {
     'use strict';
     const body = $('body');
     add_observer();
     insert_styles(body);
+    $(`:is([class*='NavigationMenu_wrapper'], [class*='_NavigationMenuContainer_']) [inert]`);
+    body.off('mouseleave.hovermenu').on('mouseleave.hovermenu', `[class*='_NavigationMenuContainer_'] [class*='_menuNavList_'] li[class*='_panelButton_']>button[class*='_menuLink'], [class*='NavigationMenu_wrapper'] [class*='NavigationMenu_panelButton']`, function (e) {
+        $(`[class*='_NavigationMenuContainer_'] [class*='_menuNavList_'] li[class*='_panelButton_']>button[class*='_menuLink']  ~ [class*='_panel_'], [class*='NavigationMenu_wrapper'] [class*='NavigationMenu_panelButton'] [class*='NavigationMenu_panel']`).css('pointer-events', '');
+        const target = $(e.currentTarget);
+        const panel = target.is(`button[class*='_menuLink']`) ? target.siblings(`[class*='_panel_']`) : target.find(`[class*='NavigationMenu_panel']`);
+        panel.css('pointer-events', 'auto');
+        clearTimeout(window.hoverMenuTimeout);
+        window.hoverMenuTimeout = setTimeout(() => {
+            panel.css('pointer-events', '');
+        }, 250)
+    });
 })();
-function add_observer(){
-    const menuObserver = new MutationObserver(function(mutationList, observer) {
+function add_observer() {
+    const menuObserver = new MutationObserver(function (mutationList, observer) {
         mutationList.forEach(mutation => {
-            adjust_menu(mutation);
+            $(`:is([class*='NavigationMenu_wrapper'], [class*='_NavigationMenuContainer_']) [inert]`).removeAttr('inert')
         });
     })
 
@@ -29,50 +40,38 @@ function add_observer(){
     const mutation_config = { attributes: true, childList: true, characterData: false, subtree: true };
     menuObserver.observe(mutation_target, mutation_config);
 }
-function adjust_menu(mutation){
-    try {
-        let mutationTarget = $(mutation.target);
-        //Remove beyond20 popup and swtich to gamelog
-        if(mutationTarget.is(`:is([class*='NavigationMenu_wrapper'], [class*='_NavigationMenuContainer_']) [inert]`)){
-            mutationTarget.removeAttr('inert')
-        }
-    } catch{
-        console.warn("failed to parse mutation", error, mutation);
-    }
-}
+
 function insert_styles(container = window.document.body) {
     const styles = `<style>
         [class*='NavigationMenu_wrapper'] {
         [class*='NavigationMenu_panelButton'] [class*='NavigationMenu_panel'] {
-			transition: 0s all 0.4s;
+			transition: 0s all 500ms;
 		}
 		[class*='NavigationMenu_panelButton']:hover [class*='NavigationMenu_panel'],
-        [class*='NavigationMenu_panelButton'] [class*='NavigationMenu_panel']:hover{
+        [class*='NavigationMenu_panelButton'] [class*='NavigationMenu_panel']:hover
+		{
 			transition: 0s all 0s;
 			opacity: 1;
 			transform: translateY(0);
 			pointer-events: auto;
-		}
-
-		li[class*='_panelButton_']>button[class*='_menuLink']~ [class*='_panel_']:hover  {
-			transition: 0s all 0s;
-			opacity: 1;
-			transform: translateY(0);
-			pointer-events: auto;
+            z-index: 100000;
 		}
     }
 
-   	[class*='_NavigationMenuContainer_'] [class*='_menuNavList_']{
+	[class*='_NavigationMenuContainer_'] [class*='_menuNavList_']{
 		li[class*='_panelButton_']>button[class*='_menuLink'] ~ [class*='_panel_'] {
-			transition: 0s all 0.4s;
+			transition: 0s all 500ms;
+
 		}
 		li[class*='_panelButton_']>button[class*='_menuLink']:hover ~ [class*='_panel_'],
         li[class*='_panelButton_']>button[class*='_menuLink']~ [class*='_panel_']:hover {
 			transition: 0s all 0s;
 			opacity: 1;
 			transform: translateY(0);
-			pointer-events: auto;
+			pointer-events: auto !important;
+            z-index: 100000;
 		}
+
 	}
 </style>`
     container.append(styles);
