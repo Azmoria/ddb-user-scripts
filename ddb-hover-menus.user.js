@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Hover menu
-// @version      0.3
+// @version      0.2
 // @description  adds hover back to ddb's site menu
 // @author       Azmoria
 // @require      https://code.jquery.com/jquery-3.6.0.min.js
