@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Hover menu
-// @version      0.7
+// @version      0.8
 // @description  adds hover back to ddb's site menu
 // @author       Azmoria
 // @require      https://code.jquery.com/jquery-3.6.0.min.js
@@ -46,7 +46,7 @@ function add_observer() {
         if ($(`#megaMenuForumLink`).length == 0) {
 
             const forumLink = $(`<li id='megaMenuForumLink'><a href="https://www.dndbeyond.com/forums" data-testid="navigation-link" data-action_detail="navigation" data-item_name="Forums" data-item_format="button" data-target_url="https://www.dndbeyond.com/forums" data-item_index="4">Forums</a></li>`);
-            $(`[class*='NavigationMenu'] ul li:nth-child(4)`).after(forumLink);
+            $(`[class*='NavigationMenu'] nav>ul>li:nth-child(4)`).after(forumLink);
         }
 
 
