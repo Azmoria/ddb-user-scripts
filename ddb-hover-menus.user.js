@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Hover menu
-// @version      0.9
+// @version      0.10
 // @description  adds hover back to ddb's site menu
 // @author       Azmoria
 // @require      https://code.jquery.com/jquery-3.6.0.min.js
@@ -20,13 +20,13 @@
     body.off('mouseover.hovermenu').on('mouseover.hovermenu', `[class*='NavigationMenuContainer'] [class*='_menuNavList'] li[class*='_panelButton']>button[class*='_menuLink'], [class*='NavigationMenu_wrapper'] [class*='NavigationMenu_panelButton']`, function (e) {
         clearTimeout(window.hoverMenuButtonTimeout);
         window.hoverMenuButtonTimeout = setTimeout(async () => {
-            
+
             $(`[class*='NavigationMenuContainer'] [class*='_menuNavList'] li[class*='_panelButton']>button[class*='_menuLink']  ~ [class*='_panel_'], [class*='NavigationMenu_wrapper'] [class*='NavigationMenu_panelButton'] [class*='NavigationMenu_panel']`).toggleClass('pointerEventsAll', false);
             const target = $(e.currentTarget);
             if (!target.is(':hover'))
                 return;
-            if (target.is('[data-item_name="Library"], :has([data-item_name="Library"])')){
-                const button = target.find('>button');
+            if (target.is('[data-item_name="Library"], :has([data-item_name="Library"])')) {
+                const button = target.is('button') ? target : target.find('>button');
                 await button.click();
                 await button.click();
             }
