@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Hover menu
-// @version      0.10
+// @version      0.11
 // @description  adds hover back to ddb's site menu
 // @author       Azmoria
 // @require      https://code.jquery.com/jquery-3.6.0.min.js
@@ -83,8 +83,32 @@ function insert_styles(container = window.document.body) {
     white-space: nowrap;
     fill: currentColor;
 margin-right: 32px;
+position: relative;
+    background-repeat: no-repeat;
+    background-position-y: 32px;
+    transition: color 0s ease, background-position-y .4s ease;
+    background-image: radial-gradient(80% 50% at 50% 100%, #e40712 0%, transparent 50%);
+}
+#megaMenuForumLink a:hover{
+    color: var(--ttui_common-0);
+    background-position-y: 0;
 }
 
+#megaMenuForumLink a:after{
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: calc(var(--border-bottom-height) * -1);
+    height: var(--border-bottom-height);
+    transition: .4s;
+    background-image: linear-gradient(90deg, transparent 0%, #e40712 50%, transparent 100%);
+    width: 0;
+    left: 50%;
+}
+#megaMenuForumLink a:hover:after{
+     width: 100%;
+    left: 0;
+}
         [class*='NavigationMenu_wrapper'] {
         [class*='NavigationMenu_panelButton'] [class*='NavigationMenu_panel'] {
 			transition: 0s all 500ms;
