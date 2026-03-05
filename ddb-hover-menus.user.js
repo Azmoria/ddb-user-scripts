@@ -6,8 +6,8 @@
 // @require      https://code.jquery.com/jquery-3.6.0.min.js
 // @match        https://www.dndbeyond.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=dndbeyond.com
-// @downloadURL  https://github.com/Azmoria/dice-on-all-ddb-pages/raw/refs/heads/main/inject-dice-on-all-ddb-pages.user.js
-// @updateURL    https://github.com/Azmoria/dice-on-all-ddb-pages/raw/refs/heads/main/inject-dice-on-all-ddb-pages.user.js
+// @downloadURL  https://github.com/Azmoria/ddb-user-scripts/raw/refs/heads/main/ddb-hover-menus.user.js.user.js
+// @updateURL    https://github.com/Azmoria/ddb-user-scripts/raw/refs/heads/main/ddb-hover-menus.user.js.user.js
 // @run-at       document-end
 // ==/UserScript==
 
