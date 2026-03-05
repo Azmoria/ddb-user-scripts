@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Hover menu
-// @version      0.5
+// @version      0.6
 // @description  adds hover back to ddb's site menu
 // @author       Azmoria
 // @require      https://code.jquery.com/jquery-3.6.0.min.js
@@ -22,16 +22,22 @@
         window.hoverMenuButtonTimeout = setTimeout(() => {
             $(`[class*='NavigationMenuContainer'] [class*='_menuNavList'] li[class*='_panelButton']>button[class*='_menuLink']  ~ [class*='_panel_'], [class*='NavigationMenu_wrapper'] [class*='NavigationMenu_panelButton'] [class*='NavigationMenu_panel']`).toggleClass('pointerEventsAll', false);
             const target = $(e.currentTarget);
-            if(!target.is(':hover'))
+            if (!target.is(':hover'))
                 return;
             const panel = target.is(`button[class*='_menuLink']`) ? target.siblings(`[class*='_panel']`) : target.find(`[class*='NavigationMenu_panel']`);
             panel.toggleClass('pointerEventsAll', true);
         }, 250)
     });
+    body.off('mouseenter.hovermenu').on('mouseenter.hovermenu', `[class*='NavigationMenuContainer'] [class*='_menuNavList'] li[class*='_panelButton']>button[class*='_menuLink']  ~ [class*='_panel'], [class*='NavigationMenu_wrapper'] [class*='NavigationMenu_panelButton'] [class*='NavigationMenu_panel']`, function (e) {
+        clearTimeout(window.hoverMenuButtonTimeout);
+        clearTimeout(window.hoverMenuFlyoutTimeout);
+    });
     body.off('mouseleave.hovermenu').on('mouseleave.hovermenu', `[class*='NavigationMenuContainer'] [class*='_menuNavList'] li[class*='_panelButton']>button[class*='_menuLink']  ~ [class*='_panel'], [class*='NavigationMenu_wrapper'] [class*='NavigationMenu_panelButton'] [class*='NavigationMenu_panel']`, function (e) {
         clearTimeout(window.hoverMenuButtonTimeout);
-        const target = $(e.currentTarget);
-        target.toggleClass('pointerEventsAll', false);
+        window.hoverMenuFlyoutTimeout = setTimeout(() => {
+            const target = $(e.currentTarget);
+            target.toggleClass('pointerEventsAll', false);
+        }, 250)
     });
 })();
 function add_observer() {
