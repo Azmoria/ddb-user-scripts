@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Hover menu
-// @version      0.4
+// @version      0.5
 // @description  adds hover back to ddb's site menu
 // @author       Azmoria
 // @require      https://code.jquery.com/jquery-3.6.0.min.js
@@ -16,19 +16,19 @@
     const body = $('body');
     add_observer();
     insert_styles(body);
-    $(`:is([class*='NavigationMenu_wrapper'], [class*='_NavigationMenuContainer_']) [inert]`);
-    body.off('mouseover.hovermenu').on('mouseover.hovermenu', `[class*='_NavigationMenuContainer_'] [class*='_menuNavList_'] li[class*='_panelButton_']>button[class*='_menuLink'], [class*='NavigationMenu_wrapper'] [class*='NavigationMenu_panelButton']`, function (e) {
+    $(`:is([class*='NavigationMenu_wrapper'], [class*='NavigationMenuContainer']) [inert]`);
+    body.off('mouseover.hovermenu').on('mouseover.hovermenu', `[class*='NavigationMenuContainer'] [class*='_menuNavList'] li[class*='_panelButton']>button[class*='_menuLink'], [class*='NavigationMenu_wrapper'] [class*='NavigationMenu_panelButton']`, function (e) {
         clearTimeout(window.hoverMenuButtonTimeout);
         window.hoverMenuButtonTimeout = setTimeout(() => {
-            $(`[class*='_NavigationMenuContainer_'] [class*='_menuNavList_'] li[class*='_panelButton_']>button[class*='_menuLink']  ~ [class*='_panel_'], [class*='NavigationMenu_wrapper'] [class*='NavigationMenu_panelButton'] [class*='NavigationMenu_panel']`).toggleClass('pointerEventsAll', false);
+            $(`[class*='NavigationMenuContainer'] [class*='_menuNavList'] li[class*='_panelButton']>button[class*='_menuLink']  ~ [class*='_panel_'], [class*='NavigationMenu_wrapper'] [class*='NavigationMenu_panelButton'] [class*='NavigationMenu_panel']`).toggleClass('pointerEventsAll', false);
             const target = $(e.currentTarget);
             if(!target.is(':hover'))
                 return;
-            const panel = target.is(`button[class*='_menuLink']`) ? target.siblings(`[class*='_panel_']`) : target.find(`[class*='NavigationMenu_panel']`);
+            const panel = target.is(`button[class*='_menuLink']`) ? target.siblings(`[class*='_panel']`) : target.find(`[class*='NavigationMenu_panel']`);
             panel.toggleClass('pointerEventsAll', true);
         }, 250)
     });
-    body.off('mouseleave.hovermenu').on('mouseleave.hovermenu', `[class*='_NavigationMenuContainer_'] [class*='_menuNavList_'] li[class*='_panelButton_']>button[class*='_menuLink']  ~ [class*='_panel_'], [class*='NavigationMenu_wrapper'] [class*='NavigationMenu_panelButton'] [class*='NavigationMenu_panel']`, function (e) {
+    body.off('mouseleave.hovermenu').on('mouseleave.hovermenu', `[class*='NavigationMenuContainer'] [class*='_menuNavList'] li[class*='_panelButton']>button[class*='_menuLink']  ~ [class*='_panel'], [class*='NavigationMenu_wrapper'] [class*='NavigationMenu_panelButton'] [class*='NavigationMenu_panel']`, function (e) {
         clearTimeout(window.hoverMenuButtonTimeout);
         const target = $(e.currentTarget);
         target.toggleClass('pointerEventsAll', false);
@@ -37,7 +37,7 @@
 function add_observer() {
     const menuObserver = new MutationObserver(function (mutationList, observer) {
         mutationList.forEach(mutation => {
-            $(`:is([class*='NavigationMenu_wrapper'], [class*='_NavigationMenuContainer_']) [inert]`).removeAttr('inert')
+            $(`:is([class*='NavigationMenu_wrapper'], [class*='NavigationMenuContainer']) [inert]`).removeAttr('inert')
         });
     })
 
@@ -66,13 +66,13 @@ function insert_styles(container = window.document.body) {
 .pointerEventsAll{
     pointer-events:auto !important;
 }
-	[class*='_NavigationMenuContainer_'] [class*='_menuNavList_']{
-		li[class*='_panelButton_']>button[class*='_menuLink'] ~ [class*='_panel_'] {
+	[class*='NavigationMenuContainer'] [class*='_menuNavList']{
+		li[class*='_panelButton']>button[class*='_menuLink'] ~ [class*='_panel'] {
 			transition: 0s all 500ms;
 
 		}
-		li[class*='_panelButton_']>button[class*='_menuLink']:hover ~ [class*='_panel_'],
-        li[class*='_panelButton_']>button[class*='_menuLink']~ [class*='_panel_']:hover {
+		li[class*='_panelButton']>button[class*='_menuLink']:hover ~ [class*='_panel'],
+        li[class*='_panelButton']>button[class*='_menuLink']~ [class*='_panel']:hover {
 			transition: 0s all 0.25s;
 			opacity: 1;
 			transform: translateY(0);
