@@ -24,7 +24,7 @@
             const target = $(e.currentTarget);
             const panel = target.is(`button[class*='_menuLink']`) ? target.siblings(`[class*='_panel_']`) : target.find(`[class*='NavigationMenu_panel']`);
             panel.toggleClass('pointerEventsAll', true);
-        }, 400)
+        }, 250)
     });
     body.off('mouseleave.hovermenu').on('mouseleave.hovermenu', `[class*='_NavigationMenuContainer_'] [class*='_menuNavList_'] li[class*='_panelButton_']>button[class*='_menuLink']  ~ [class*='_panel_'], [class*='NavigationMenu_wrapper'] [class*='NavigationMenu_panelButton'] [class*='NavigationMenu_panel']`, function (e) {
         clearTimeout(window.hoverMenuButtonTimeout);
@@ -54,7 +54,7 @@ function insert_styles(container = window.document.body) {
 		[class*='NavigationMenu_panelButton']:hover [class*='NavigationMenu_panel'],
         [class*='NavigationMenu_panelButton'] [class*='NavigationMenu_panel']:hover
 		{
-			transition: 0s all 0.4s;
+			transition: 0s all 0.25s;
 			opacity: 1;
 			transform: translateY(0);
             z-index: 100000;
@@ -71,13 +71,11 @@ function insert_styles(container = window.document.body) {
 		}
 		li[class*='_panelButton_']>button[class*='_menuLink']:hover ~ [class*='_panel_'],
         li[class*='_panelButton_']>button[class*='_menuLink']~ [class*='_panel_']:hover {
-			transition: 0s all 0.4s;
+			transition: 0s all 0.25s;
 			opacity: 1;
 			transform: translateY(0);
             z-index: 100000;
 		}
-
-
 	}
 </style>`
     container.append(styles);
