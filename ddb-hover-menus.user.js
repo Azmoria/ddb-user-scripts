@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Hover menu
-// @version      0.11
+// @version      0.12
 // @description  adds hover back to ddb's site menu
 // @author       Azmoria
 // @require      https://code.jquery.com/jquery-3.6.0.min.js
@@ -25,7 +25,7 @@
             const target = $(e.currentTarget);
             if (!target.is(':hover'))
                 return;
-            if (target.is('[data-item_name="Library"], :has([data-item_name="Library"])')) {
+            if (target.is('[data-item_name="Library"], :has([data-item_name="Library"])')){
                 const button = target.is('button') ? target : target.find('>button');
                 await button.click();
                 await button.click();
@@ -39,7 +39,7 @@
         clearTimeout(window.hoverMenuFlyoutTimeout);
     });
     body.off('mouseleave.hovermenu').on('mouseleave.hovermenu', `[class*='NavigationMenuContainer'] [class*='_menuNavList'] li[class*='_panelButton']>button[class*='_menuLink']  ~ [class*='_panel'], [class*='NavigationMenu_wrapper'] [class*='NavigationMenu_panelButton'] [class*='NavigationMenu_panel']`, function (e) {
-        clearTimeout(window.hoverMenuButtonTimeout);
+        clearTimeout(window.hoverMenuFlyoutTimeout);
         window.hoverMenuFlyoutTimeout = setTimeout(() => {
             const target = $(e.currentTarget);
             target.toggleClass('pointerEventsAll', false);
@@ -50,12 +50,9 @@ function add_observer() {
     const menuObserver = new MutationObserver(function (mutationList, observer) {
         $(`:is([class*='NavigationMenu_wrapper'], [class*='NavigationMenuContainer']) [inert]`).removeAttr('inert')
         if ($(`#megaMenuForumLink`).length == 0) {
-
             const forumLink = $(`<li id='megaMenuForumLink'><a href="https://www.dndbeyond.com/forums" data-testid="navigation-link" data-action_detail="navigation" data-item_name="Forums" data-item_format="button" data-target_url="https://www.dndbeyond.com/forums" data-item_index="4">Forums</a></li>`);
             $(`[class*='NavigationMenu'] nav>ul>li:nth-child(4)`).after(forumLink);
         }
-
-
     })
 
     const mutation_target = $('body')[0];
