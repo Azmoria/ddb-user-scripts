@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better tooltips DDB
 // @namespace    github.com/azmoria
-// @version      0.14
+// @version      0.15
 // @description  Better tooltips DDB
 // @author       Azmoria
 // @downloadURL  https://github.com/Azmoria/better-ddb-tooltips/raw/main/better-ddb-tooltips.user.js
@@ -31,6 +31,54 @@ let removeToolTipTimer = undefined;
         }
         .tooltip::after{
            pointer-events:none;
+        }
+
+        .tooltip-hover.action-tooltip {
+            color: var(--compendium-action-tooltip,var(--compendium-default-tooltip,#11884c))!important
+        }
+
+        .tooltip-hover.condition-tooltip {
+            color: var(--compendium-condition-tooltip,var(--compendium-default-tooltip,#5a8100))!important
+        }
+
+        .tooltip-hover.item-tooltip {
+            color: var(--compendium-item-tooltip,#774521)!important
+        }
+
+        .tooltip-hover.lore-tooltip {
+            color: var(--compendium-lore-tooltip,#a83e3e)!important
+        }
+
+        .tooltip-hover.monster-tooltip {
+            color: var(--compendium-monster-tooltip,#bc0f0f)!important
+        }
+
+        .tooltip-hover.magic-item-tooltip {
+            color: var(--compendium-magic-item-tooltip,#0f5cbc)!important
+        }
+
+        .tooltip-hover.rule-tooltip {
+            color: var(--compendium-rule-tooltip,#9b740b)!important
+        }
+
+        .tooltip-hover.sense-tooltip {
+            color: var(--compendium-sense-tooltip,var(--compendium-default-tooltip,#a41b96))!important
+        }
+
+        .tooltip-hover.spell-tooltip {
+            color: var(--compendium-spell-tooltip,#704cd9)!important
+        }
+
+        .tooltip-hover.skill-tooltip {
+            color: var(--compendium-skill-tooltip,var(--compendium-default-tooltip,#11884c))!important
+        }
+
+        .tooltip-hover.weapon-properties-tooltip {
+            color: var(--compendium-wprop-tooltip,var(--compendium-default-tooltip,#11884c))!important
+        }
+
+        .tooltip-hover.vehicle-tooltip {
+            color: var(--compendium-vehicle-tooltip,#1b9af0)!important
         }
     </style>`)
 })();
@@ -107,6 +155,7 @@ function add_stat_block_hover(statBlockContainer) {
             hoverEvent.preventDefault();
 
             if (hoverEvent.type === "mouseenter") {
+                clearTimeout(window.tooltipHoverTimeout);
                 window.tooltipHoverTimeout = setTimeout(function(){
                     const dataTooltipHref = $(hoverEvent.currentTarget).attr("data-tooltip-href");
                     if (typeof dataTooltipHref === "string") {
