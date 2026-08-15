@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Inject DDB Dice on all pages
 // @namespace    github.com/azmoria
-// @version      1.1
+// @version      1.2
 // @description  Adds D&D Beyond's new 3D dice roller to almost all DDB pages
 // @author       Azmoria
 // @downloadURL  https://github.com/Azmoria/dice-on-all-ddb-pages/raw/refs/heads/main/inject-dice-on-all-ddb-pages.user.js
@@ -201,11 +201,11 @@
         }, [drawingSurface]);
         worker.postMessage({ type: 'props', payload: props });
     }
-
+    let myDiceSettings;
     function configure_rendered_dice(renderer, physicsWorker) {
         const setId = state.diceConfig?.data?.setId;
         const userSettings = state.diceConfig?.data?.settings;
-
+        myDiceSettings = userSettings;
         renderer.postMessage({ type: 'diceSets', payload: state.diceSets });
         renderer.postMessage({ type: 'preRoll', payload: { data: { setId } } });
         renderer.postMessage({
@@ -223,7 +223,7 @@
     function play_rendered_dice_sound(payload) {
         const url = payload?.url;
         if (!url) return;
-        const volume = Number(payload?.volume ?? 1);
+        const volume = Number(payload?.volume ?? 1) * (myDiceSettings?.volume ?? 1);
         const audio = new Audio(url);
         audio.volume = Math.max(0, Math.min(1, volume > 1 ? volume / 100 : volume));
         audio.play().catch(error => console.warn('Unable to play rendered dice sound', error));
