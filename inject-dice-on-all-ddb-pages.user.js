@@ -143,9 +143,7 @@
                     if (workerUrls) {
                         finish(workerUrls);
                     }
-                } catch (error) {
-                    // cross-origin/not-ready yet; keep polling
-                }
+                } catch (error) {}
             };
 
             iframe.hidden = true;
@@ -605,7 +603,7 @@
                     roll_expression(rollExpression);
                 });
                 fragment.append(button);
-                lastIndex = dicePattern.lastIndex;
+                lastIndex = ROLL_BUTTON_PATTERN.lastIndex;
             }
             fragment.append(text.slice(lastIndex));
             textNode.replaceWith(fragment);
