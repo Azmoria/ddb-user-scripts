@@ -10,9 +10,8 @@
 // @match        https://www.dndbeyond.com/*
 // @exclude      https://www.dndbeyond.com/*abovevtt*
 // @exclude      https://www.dndbeyond.com/my-dice*
-// @exclude     https://www.dndbeyond.com/*encounter*
-// @exclude     https://www.dndbeyond.com/*character*
-// @exclude     /^https://www.dndbeyond.com/campaigns/\d+.*popoutgamelog=true.*/
+// @exclude      https://www.dndbeyond.com/*encounter*
+// @exclude      https://www.dndbeyond.com/characters/*
 // @run-at       document-end
 // @grant        none
 // ==/UserScript==
