@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Inject DDB Dice on all pages
 // @namespace    github.com/azmoria
-// @version      1.2
+// @version      1.3
 // @description  Adds D&D Beyond's new 3D dice roller to almost all DDB pages
 // @author       Azmoria
 // @downloadURL  https://github.com/Azmoria/dice-on-all-ddb-pages/raw/refs/heads/main/inject-dice-on-all-ddb-pages.user.js
@@ -216,7 +216,6 @@
                 volume: userSettings?.volume
             }
         });
-        physicsWorker.postMessage({ type: 'props', payload: { dpr: 1, frameloop: 'never' } });
         renderer.postMessage({ type: 'props', payload: { dpr: 1, frameloop: 'demand' } });
     }
 
@@ -265,24 +264,40 @@
         initialize_dice_worker(renderer, canvas2.transferControlToOffscreen(), 'demand');
 
         physicsWorker.onmessage = e => {
-            if (e.data.type === 'preRoll') {
-                renderer.postMessage(e.data);
-                physicsWorker.postMessage({ ...e.data, type: 'startRoll' });
+            if(e.data.type == 'preRoll'){
+                physicsWorker.postMessage({
+                    ...e.data,
+                    type: 'startRoll'
+                })
             }
-            if (e.data.type === 'renderDice') {
-                renderer.postMessage(e.data);
+            else if(e.data.type == 'renderDice'){
+                renderer.postMessage(e.data)
+            } else if(e.data.type == 'componentMounted'){
+                physicsWorker.postMessage({type: 'props', payload: {dpr: 1, frameloop: 'never'}});
+            }else {
+                console.log('Unhandled physics worker message', e.data);
             }
         };
+        function handle_rendered_dice_message(event, renderer, physicsWorker) {
+            const {type, payload} = event.data;
+            if (type === 'componentMounted') {
+                configure_rendered_dice(renderer, physicsWorker);
+            } else if(type === 'preRoll'){
+                return;
+            } else if (type === 'playSound' || type === 'PlaySound') {
+                play_rendered_dice_sound(payload);
+            } else if(type === 'dice/roll/fulfilled'){
+                return;
+            } else if(type === 'removeRoll'){
+                physicsWorker.postMessage(event.data);
+            }else if(type === 'workerLog'){
+                console.log('Dice render worker log', payload);
+            } else {
+                console.log('Unhandled dice render worker message', event.data);
+            }
+        }
 
-        renderer.onmessage = event => {
-            if (event.data.type === 'componentMounted' && !rendererConfigured) {
-                rendererConfigured = true;
-                void configure_rendered_dice_when_ready(renderer, physicsWorker);
-            }
-            if (event.data.type === 'playSound' || event.data.type === 'PlaySound') {
-                play_rendered_dice_sound(event.data.payload);
-            }
-        };
+        renderer.onmessage = event => handle_rendered_dice_message(event, renderer, physicsWorker);
 
         const resizeDiceCanvases = () => {
             const { width, height } = getDiceViewportSize();
