@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Inject DDB Dice on all pages
 // @namespace    github.com/azmoria
-// @version      1.4
+// @version      1.5
 // @description  Adds D&D Beyond's new 3D dice roller to almost all DDB pages
 // @author       Azmoria
 // @downloadURL  https://github.com/Azmoria/dice-on-all-ddb-pages/raw/refs/heads/main/inject-dice-on-all-ddb-pages.user.js
@@ -546,8 +546,9 @@
 
     function animate_roll(message) {
         if (!state.physicsWorker) return;
+        //adjust type to deferred roll if ever capture rolls from DDB MB
         state.physicsWorker.postMessage({
-            type: 'dice/roll/deferred',
+            type: 'startRoll',
             payload: { ...message, eventType: 'dice/roll/deferred' }
         });
     }
