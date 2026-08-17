@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Inject DDB Dice on all pages
 // @namespace    github.com/azmoria
-// @version      1.3
+// @version      1.4
 // @description  Adds D&D Beyond's new 3D dice roller to almost all DDB pages
 // @author       Azmoria
 // @downloadURL  https://github.com/Azmoria/dice-on-all-ddb-pages/raw/refs/heads/main/inject-dice-on-all-ddb-pages.user.js
@@ -265,13 +265,10 @@
 
         physicsWorker.onmessage = e => {
             if(e.data.type == 'preRoll'){
-                physicsWorker.postMessage({
-                    ...e.data,
-                    type: 'startRoll'
-                })
+                renderer.postMessage(e.data);
             }
             else if(e.data.type == 'renderDice'){
-                renderer.postMessage(e.data)
+                renderer.postMessage(e.data);
             } else if(e.data.type == 'componentMounted'){
                 physicsWorker.postMessage({type: 'props', payload: {dpr: 1, frameloop: 'never'}});
             }else {
@@ -283,7 +280,12 @@
             if (type === 'componentMounted') {
                 configure_rendered_dice(renderer, physicsWorker);
             } else if(type === 'preRoll'){
-                return;
+                if(payload?.message?.data?.rolls?.length > 0){
+                    physicsWorker.postMessage({
+                        payload: {...payload.message},
+                        type: 'startRoll'
+                    })
+                }
             } else if (type === 'playSound' || type === 'PlaySound') {
                 play_rendered_dice_sound(payload);
             } else if(type === 'dice/roll/fulfilled'){
