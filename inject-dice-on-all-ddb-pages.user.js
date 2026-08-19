@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Inject DDB Dice on all pages
 // @namespace    github.com/azmoria
-// @version      1.5
+// @version      1.7
 // @description  Adds D&D Beyond's new 3D dice roller to almost all DDB pages
 // @author       Azmoria
 // @downloadURL  https://github.com/Azmoria/dice-on-all-ddb-pages/raw/refs/heads/main/inject-dice-on-all-ddb-pages.user.js
@@ -21,7 +21,7 @@
 
     const DICE_TYPES = ['d4', 'd6', 'd8', 'd10', 'd12', 'd20', 'd100'];
     const DICE_PARSE_PATTERN = /([+-]?)(\d*)d(4|6|8|10|12|20|100)\b/gi;
-    const ROLL_BUTTON_PATTERN = /\(?\d+d(?:4|6|8|10|12|20|100)(?:\s*[+−-]\s*\d+)?\)?|\bd(?:4|6|8|10|12|20|100)\b|[+−-]\d+/gi;
+    const ROLL_BUTTON_PATTERN = /\(?\d+d(?:4|6|8|10(0)?|12|20)(?:\s*[+−-]\s*\d+)?\)?|\bd(?:4|6|8|10(0)?|12|20)\b|[+−-]\d+/gi;
     const state = {
         physicsWorker: undefined,
         renderer: undefined,
@@ -627,7 +627,8 @@
                 button.type = 'button';
                 button.textContent = expression;
                 button.title = `Roll ${expression}`;
-                button.addEventListener('click', event => {
+                button.addEventListener('pointerdown', event => {
+                    if(event.button == 2) return;
                     event.preventDefault();
                     event.stopPropagation();
                     roll_expression(rollExpression);
@@ -896,7 +897,7 @@
             updateResultPosition(expanded);
         };
 
-        toggleDiceButtons.addEventListener('click', () => {
+        toggleDiceButtons.addEventListener('pointerdown', () => {
             setDiceButtonsExpanded(!state.diceButtonsExpanded);
         });
 
@@ -908,17 +909,22 @@
             button.textContent = dieType;
             button.dataset.dice = dieType;
             button.title = 'Left-click to add, right-click to subtract';
-            button.addEventListener('click', () => {
+            button.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if(e.button==2){
+                    const next = (state.counts[dieType] || 0) - 1;
+                    state.counts[dieType] = next;
+                    if (state.counts[dieType] !== 0) button.dataset.count = state.counts[dieType];
+                    else button.removeAttribute('data-count');
+                    return;
+                }
                 state.counts[dieType] = (state.counts[dieType] || 0) + 1;
                 if (state.counts[dieType] !== 0) button.dataset.count = state.counts[dieType];
                 else button.removeAttribute('data-count');
             });
             button.addEventListener('contextmenu', event => {
-                event.preventDefault();
-                const next = (state.counts[dieType] || 0) - 1;
-                state.counts[dieType] = next;
-                if (state.counts[dieType] !== 0) button.dataset.count = state.counts[dieType];
-                else button.removeAttribute('data-count');
+               event.preventDefault();
             });
             diceButtons.append(button);
         }
@@ -938,7 +944,7 @@
         advantage.textContent = 'ADV';
         advantage.title = 'Toggle advantage mode';
         advantage.className = 'ddbdice-adv-mode';
-        advantage.addEventListener('click', () => {
+        advantage.addEventListener('pointerdown', () => {
             state.rollKind = state.rollKind === 'advantage' ? '' : 'advantage';
             updateRollModeButtons();
         });
@@ -947,7 +953,7 @@
         disadvantage.textContent = 'DIS';
         disadvantage.title = 'Toggle disadvantage mode';
         disadvantage.className = 'ddbdice-dis-mode';
-        disadvantage.addEventListener('click', () => {
+        disadvantage.addEventListener('pointerdown', () => {
             state.rollKind = state.rollKind === 'disadvantage' ? '' : 'disadvantage';
             updateRollModeButtons();
         });
@@ -960,12 +966,12 @@
         const rollButton = document.createElement('button');
         rollButton.className = 'ddbdice-roll';
         rollButton.textContent = 'Roll';
-        rollButton.addEventListener('click', () => roll_pending_dice());
+        rollButton.addEventListener('pointerdown', () => roll_pending_dice());
 
         const clearButton = document.createElement('button');
         clearButton.textContent = 'Clear';
         clearButton.title = 'Clear dice from the screen';
-        clearButton.addEventListener('click', () => {
+        clearButton.addEventListener('pointerdown', () => {
             clear_dice();
             reset_pending_dice();
         });
