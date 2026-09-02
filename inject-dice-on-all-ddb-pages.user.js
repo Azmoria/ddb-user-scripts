@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Inject DDB Dice on all pages
 // @namespace    github.com/azmoria
-// @version      1.7
+// @version      1.8
 // @description  Adds D&D Beyond's new 3D dice roller to almost all DDB pages
 // @author       Azmoria
 // @downloadURL  https://github.com/Azmoria/dice-on-all-ddb-pages/raw/refs/heads/main/inject-dice-on-all-ddb-pages.user.js
@@ -21,7 +21,7 @@
 
     const DICE_TYPES = ['d4', 'd6', 'd8', 'd10', 'd12', 'd20', 'd100'];
     const DICE_PARSE_PATTERN = /([+-]?)(\d*)d(4|6|8|10|12|20|100)\b/gi;
-    const ROLL_BUTTON_PATTERN = /\(?\d+d(?:4|6|8|10(0)?|12|20)(?:\s*[+−-]\s*\d+)?\)?|\bd(?:4|6|8|10(0)?|12|20)\b|[+−-]\d+/gi;
+    const ROLL_BUTTON_PATTERN = /\(?\d+d(?:4|6|8|10(0)?|12|20)(?:\s*[+—−-]\s*\d+)?\)?|\bd(?:4|6|8|10(0)?|12|20)\b|(?<!\d)\s*[+—−-]\d+/gi;
     const state = {
         physicsWorker: undefined,
         renderer: undefined,
@@ -613,11 +613,13 @@
             let lastIndex = 0;
             let match;
             ROLL_BUTTON_PATTERN.lastIndex = 0;
+
+
             while ((match = ROLL_BUTTON_PATTERN.exec(text))) {
                 fragment.append(text.slice(lastIndex, match.index));
                 const expression = match[0];
-                const normalizedExpression = expression.replace(/−/g, '-');
-                const rollExpression = /^[+-]\d+$/.test(normalizedExpression)
+                const normalizedExpression = expression.replace(/[−—]/g, '-');
+                const rollExpression = /^(?<!\d)[+-]\d+$/.test(normalizedExpression)
                     ? `1d20${normalizedExpression}`
                     : /^d(?:4|6|8|10|12|20|100)$/i.test(expression)
                         ? `1${expression}`
